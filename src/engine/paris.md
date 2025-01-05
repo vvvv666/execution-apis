@@ -111,9 +111,11 @@ Payload validation process consists of validating a payload with respect to the 
       payload satisfying the above conditions.
   * Client software **MUST NOT** surface an `INVALID` payload over any API endpoint and p2p interface.
 
-4. Client software **MAY** provide additional details on the validation error if a payload is deemed `INVALID` by assigning the corresponding message to the `validationError` field.
+4. Payload validation process **MUST** be idempotent with respect to payload's validity status (`VALID | INVALID`), i.e. a payload which validity status is `INVALID (INVALID_BLOCK_HASH)` **MUST NOT** become `VALID` and vice versa at any point in time when it subsequently runs through the validation process. Client software **MAY** change payload status from `INVALID` to `SYNCING | ACCEPTED` as long as the payload remains `INVALID` as a result of any further run of the validation process.
 
-5. The process of validating a payload on the canonical chain **MUST NOT** be affected by an active sync process on a side branch of the block tree. For example, if side branch `B` is `SYNCING` but the requisite data for validating a payload from canonical branch `A` is available, client software **MUST** run full validation of the payload and respond accordingly.
+5. Client software **MAY** provide additional details on the validation error if a payload is deemed `INVALID` by assigning the corresponding message to the `validationError` field.
+
+6. The process of validating a payload on the canonical chain **MUST NOT** be affected by an active sync process on a side branch of the block tree. For example, if side branch `B` is `SYNCING` but the requisite data for validating a payload from canonical branch `A` is available, client software **MUST** run full validation of the payload and respond accordingly.
 
 ### Sync
 
@@ -159,26 +161,30 @@ The payload build process is specified as follows:
 
 #### Specification
 
-1. Client software **MUST** validate `blockHash` value as being equivalent to `Keccak256(RLP(ExecutionBlockHeader))`, where `ExecutionBlockHeader` is the execution layer block header (the former PoW block header structure). Fields of this object are set to the corresponding payload values and constant values according to the Block structure section of [EIP-3675](https://eips.ethereum.org/EIPS/eip-3675#block-structure), extended with the corresponding section of [EIP-4399](https://eips.ethereum.org/EIPS/eip-4399#block-structure). Client software **MUST** run this validation in all cases even if this branch or any other branches of the block tree are in an active sync process.
+1. Client software **MUST** validate that all `transactions` have non-zero length (at least 1 byte). Client software **MUST** run this validation in all cases even if this branch or any other branches of the block tree are in an active sync process.
 
-2. Client software **MAY** initiate a sync process if requisite data for payload validation is missing. Sync process is specified in the [Sync](#sync) section.
+2. Client software **MUST** validate `blockHash` value as being equivalent to `Keccak256(RLP(ExecutionBlockHeader))`, where `ExecutionBlockHeader` is the execution layer block header (the former PoW block header structure). Fields of this object are set to the corresponding payload values and constant values according to the Block structure section of [EIP-3675](https://eips.ethereum.org/EIPS/eip-3675#block-structure), extended with the corresponding section of [EIP-4399](https://eips.ethereum.org/EIPS/eip-4399#block-structure). Client software **MUST** run this validation in all cases even if this branch or any other branches of the block tree are in an active sync process.
 
-3. Client software **MUST** validate the payload if it extends the canonical chain and requisite data for the validation is locally available. The validation process is specified in the [Payload validation](#payload-validation) section.
+3. Client software **MAY** initiate a sync process if requisite data for payload validation is missing. Sync process is specified in the [Sync](#sync) section.
 
-4. Client software **MAY NOT** validate the payload if the payload doesn't belong to the canonical chain.
+4. Client software **MUST** validate the payload if it extends the canonical chain and requisite data for the validation is locally available. The validation process is specified in the [Payload validation](#payload-validation) section.
 
-5. Client software **MUST** respond to this method call in the following way:
+5. Client software **MAY NOT** validate the payload if the payload doesn't belong to the canonical chain.
+
+6. Client software **MUST** respond to this method call in the following way:
+  * `{status: INVALID, latestValidHash: null, validationError: errorMessage | null}` if `transactions` contains zero length or invalid entries
   * `{status: INVALID_BLOCK_HASH, latestValidHash: null, validationError: errorMessage | null}` if the `blockHash` validation has failed
   * `{status: INVALID, latestValidHash: 0x0000000000000000000000000000000000000000000000000000000000000000, validationError: errorMessage | null}` if terminal block conditions are not satisfied
   * `{status: SYNCING, latestValidHash: null, validationError: null}` if requisite data for the payload's acceptance or validation is missing
   * with the payload status obtained from the [Payload validation](#payload-validation) process if the payload has been fully validated while processing the call
   * `{status: ACCEPTED, latestValidHash: null, validationError: null}` if the following conditions are met:
+    - all `transactions` have non-zero length
     - the `blockHash` of the payload is valid
     - the payload doesn't extend the canonical chain
     - the payload hasn't been fully validated
     - ancestors of a payload are known and comprise a well-formed chain.
 
-6. If any of the above fails due to errors unrelated to the normal processing flow of the method, client software **MUST** respond with an error object.
+7. If any of the above fails due to errors unrelated to the normal processing flow of the method, client software **MUST** respond with an error object.
 
 ### engine_forkchoiceUpdatedV1
 
@@ -204,7 +210,7 @@ The payload build process is specified as follows:
 
 1. Client software **MAY** initiate a sync process if `forkchoiceState.headBlockHash` references an unknown payload or a payload that can't be validated because data that are requisite for the validation is missing. The sync process is specified in the [Sync](#sync) section.
 
-2. Client software **MAY** skip an update of the forkchoice state and **MUST NOT** begin a payload build process if `forkchoiceState.headBlockHash` references an ancestor of the head of canonical chain. In the case of such an event, client software **MUST** return `{payloadStatus: {status: VALID, latestValidHash: forkchoiceState.headBlockHash, validationError: null}, payloadId: null}`.
+2. Client software **MAY** skip an update of the forkchoice state and **MUST NOT** begin a payload build process if `forkchoiceState.headBlockHash` references a `VALID` ancestor of the head of canonical chain, i.e. the ancestor passed [payload validation](#payload-validation) process and deemed `VALID`. In the case of such an event, client software **MUST** return `{payloadStatus: {status: VALID, latestValidHash: forkchoiceState.headBlockHash, validationError: null}, payloadId: null}`.
 
 3. If `forkchoiceState.headBlockHash` references a PoW block, client software **MUST** validate this block with respect to terminal block conditions according to [EIP-3675](https://eips.ethereum.org/EIPS/eip-3675#transition-block-validity). This check maps to the transition block validity section of the EIP. Additionally, if this validation fails, client software **MUST NOT** update the forkchoice state and **MUST NOT** begin a payload build process.
 
@@ -216,11 +222,15 @@ The payload build process is specified as follows:
 
 6. Client software **MUST** return `-38002: Invalid forkchoice state` error if the payload referenced by `forkchoiceState.headBlockHash` is `VALID` and a payload referenced by either `forkchoiceState.finalizedBlockHash` or `forkchoiceState.safeBlockHash` does not belong to the chain defined by `forkchoiceState.headBlockHash`.
 
-7. Client software **MUST** ensure that `payloadAttributes.timestamp` is greater than `timestamp` of a block referenced by `forkchoiceState.headBlockHash`. If this condition isn't held client software **MUST** respond with `-38003: Invalid payload attributes` and **MUST NOT** begin a payload build process. In such an event, the `forkchoiceState` update **MUST NOT** be rolled back.
+7. Client software **MUST** process provided `payloadAttributes` after successfully applying the `forkchoiceState` and only if the payload referenced by `forkchoiceState.headBlockHash` is `VALID`. The processing flow is as follows:
 
-8. Client software **MUST** begin a payload build process building on top of `forkchoiceState.headBlockHash` and identified via `buildProcessId` value if `payloadAttributes` is not `null` and the forkchoice state has been updated successfully. The build process is specified in the [Payload building](#payload-building) section.
+    1. Verify that `payloadAttributes.timestamp` is greater than `timestamp` of a block referenced by `forkchoiceState.headBlockHash` and return `-38003: Invalid payload attributes` on failure.
 
-9. Client software **MUST** respond to this method call in the following way:
+    2. If `payloadAttributes` passes all validation steps, begin a payload build process building on top of `forkchoiceState.headBlockHash` and identified via `buildProcessId` value. The build process is specified in the [Payload building](#payload-building) section.
+
+    3. If `payloadAttributes` validation fails, the `forkchoiceState` update **MUST NOT** be rolled back.
+
+8. Client software **MUST** respond to this method call in the following way:
   * `{payloadStatus: {status: SYNCING, latestValidHash: null, validationError: null}, payloadId: null}` if `forkchoiceState.headBlockHash` references an unknown payload or a payload that can't be validated because requisite data for the validation is missing
   * `{payloadStatus: {status: INVALID, latestValidHash: validHash, validationError: errorMessage | null}, payloadId: null}` obtained from the [Payload validation](#payload-validation) process if the payload is deemed `INVALID`
   * `{payloadStatus: {status: INVALID, latestValidHash: 0x0000000000000000000000000000000000000000000000000000000000000000, validationError: errorMessage | null}, payloadId: null}` obtained either from the [Payload validation](#payload-validation) process or as a result of validating a terminal PoW block referenced by `forkchoiceState.headBlockHash`
@@ -229,7 +239,7 @@ The payload build process is specified as follows:
   * `{error: {code: -38002, message: "Invalid forkchoice state"}}` if `forkchoiceState` is either invalid or inconsistent
   * `{error: {code: -38003, message: "Invalid payload attributes"}}` if the payload is deemed `VALID` and `forkchoiceState` has been applied successfully, but no build process has been started due to invalid `payloadAttributes`.
 
-10. If any of the above fails due to errors unrelated to the normal processing flow of the method, client software **MUST** respond with an error object.
+9. If any of the above fails due to errors unrelated to the normal processing flow of the method, client software **MUST** respond with an error object.
 
 ### engine_getPayloadV1
 
