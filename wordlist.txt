@@ -4,6 +4,7 @@ bodyv
 bodiesbyrangev
 bodiesbyhashv
 bytecode
+clientversionv
 configurationv
 crypto
 eip
@@ -11,7 +12,12 @@ endian
 enum
 eth
 ethereum
+ethereumjs
+erigon
+getclientversionv
+getblobsv
 interop
+js
 json
 mempool
 merkle
@@ -29,6 +35,7 @@ secp
 statev
 statusv
 sha
+teku
 uint
 updatedv
 url
@@ -36,6 +43,8 @@ validator
 wei
 yaml
 yParity
+eips
+EIPS
 EL
 CL
 CLs
@@ -45,6 +54,7 @@ ipc
 cli
 blobsbundlev
 getblobsbundlev
+blobandproofv
 ssz
 kzg
 besu
@@ -57,3 +67,4 @@ randao
 src
 https
 forkchoiceupdatedresponsev
+exitv
