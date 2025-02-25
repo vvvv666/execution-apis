@@ -474,22 +474,6 @@
             "deprecationReason": null
           },
           {
-            "name": "totalDifficulty",
-            "description": "TotalDifficulty is the sum of all difficulty values up to and including\nthis block.",
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "BigInt",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "ommerCount",
             "description": "OmmerCount is the number of ommers (AKA uncles) associated with this\nblock. If ommers are unavailable, this field will be null.",
             "args": [],
@@ -763,6 +747,62 @@
                 "name": "Bytes",
                 "ofType": null
               }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "withdrawalsRoot",
+            "description": "WithdrawalsRoot is the withdrawals trie root in this block.\nIf withdrawals are unavailable for this block, this field will be null.",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Bytes32",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "withdrawals",
+            "description": "Withdrawals is a list of withdrawals associated with this block. If\nwithdrawals are unavailable for this block, this field will be null.",
+            "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Withdrawal",
+                  "ofType": null
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "blobGasUsed",
+            "description": "BlobGasUsed is the total amount of gas used by the transactions.",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Long",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "excessBlobGas",
+            "description": "ExcessBlobGas is a running total of blob gas consumed in excess of the target, prior to the block.",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Long",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -1867,6 +1907,18 @@
             "deprecationReason": null
           },
           {
+            "name": "maxFeePerBlobGas",
+            "description": "MaxFeePerBlobGas is the maximum blob gas fee cap per blob the sender is willing to pay for blob transaction, in wei.",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "effectiveTip",
             "description": "EffectiveTip is the actual amount of reward going to miner after considering the max fee cap.",
             "args": [],
@@ -1971,6 +2023,30 @@
             "deprecationReason": null
           },
           {
+            "name": "blobGasUsed",
+            "description": "BlobGasUsed is the amount of blob gas used by this transaction.",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Long",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "blobGasPrice",
+            "description": "blobGasPrice is the actual value per blob gas deducted from the senders account.",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "createdContract",
             "description": "CreatedContract is the account that was created by a contract creation\ntransaction. If the transaction was not a contract creation transaction,\nor it has not yet been mined, this field will be null.",
             "args": [
@@ -2062,6 +2138,18 @@
             "deprecationReason": null
           },
           {
+            "name": "yParity",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "type",
             "description": "Envelope transaction support",
             "args": [],
@@ -2119,6 +2207,101 @@
               "ofType": {
                 "kind": "SCALAR",
                 "name": "Bytes",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "blobVersionedHashes",
+            "description": "BlobVersionedHashes is a set of hash outputs from the blobs in the transaction.",
+            "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Bytes32",
+                  "ofType": null
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "Withdrawal",
+        "description": "EIP-4895",
+        "fields": [
+          {
+            "name": "index",
+            "description": "Index is a monotonically increasing identifier issued by consensus layer.",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Long",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "validator",
+            "description": "Validator is index of the validator associated with withdrawal.",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Long",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "address",
+            "description": "Recipient address of the withdrawn amount.",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Address",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "amount",
+            "description": "Amount is the withdrawal value in Gwei.",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Long",
                 "ofType": null
               }
             },

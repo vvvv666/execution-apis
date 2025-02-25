@@ -1,2 +1,3 @@
->> {"jsonrpc":"2.0","id":1,"method":"eth_getBalance","params":["0xaa00000000000000000000000000000000000000","0x898753d8fdd8d92c1907ca21e68c7970abd290c647a202091181deec3f30a0b2"]}
-<< {"jsonrpc":"2.0","id":1,"result":"0x1"}
+// retrieves the an account's balance at a specific blockhash
+>> {"jsonrpc":"2.0","id":1,"method":"eth_getBalance","params":["0x7dcd17433742f4c0ca53122ab541d0ba67fc27df","0x773d84fb93989e09f270685b34a4e4cccbec3763a1e7f130648468441c4ae877"]}
+<< {"jsonrpc":"2.0","id":1,"result":"0x3c"}

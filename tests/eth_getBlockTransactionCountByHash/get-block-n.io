@@ -1,2 +1,3 @@
->> {"jsonrpc":"2.0","id":1,"method":"eth_getBlockTransactionCountByHash","params":["0xfe21bb173f43067a9f90cfc59bbb6830a7a2929b5de4a61f372a9db28e87f9ae"]}
-<< {"jsonrpc":"2.0","id":1,"result":"0x1"}
+// gets tx count in a non-empty block
+>> {"jsonrpc":"2.0","id":1,"method":"eth_getBlockTransactionCountByHash","params":["0xbb198addc8a129024ed75dbe52a8c89a6baa97980c855241790439db182a210b"]}
+<< {"jsonrpc":"2.0","id":1,"result":"0x4"}

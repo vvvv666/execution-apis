@@ -98,6 +98,7 @@ The list of error codes introduced by this specification can be found below.
 | -38002 | Invalid forkchoice state | Forkchoice state is invalid / inconsistent. |
 | -38003 | Invalid payload attributes | Payload attributes are invalid / inconsistent. |
 | -38004 | Too large request | Number of requested entities is too large. |
+| -38005 | Unsupported fork | Payload belongs to a fork that is not supported. |
 
 Each error returns a `null` `data` value, except `-32000` which returns the `data` object with a `err` member that explains the error encountered.
 
@@ -160,7 +161,7 @@ Execution layer clients **MUST** support `engine_exchangeCapabilities` method, w
 
 #### Specification
 
-1. Consensus and execution layer client software **MAY** exchange with a list of currently supported Engine API methods. Execution layer client software **MUST NOT** log any error messages if this method has either never been called or haven't been called for a significant amount of time.
+1. Consensus and execution layer client software **MAY** exchange with a list of currently supported Engine API methods. Execution layer client software **MUST NOT** log any error messages if this method has either never been called or hasn't been called for a significant amount of time.
 
 2. Request and response lists **MUST** contain Engine API methods that are currently supported by consensus and execution client software respectively. Name of each method in both lists **MUST** include suffixed version. Consider the following examples:
     * Client software of both layers currently supports `V1` and `V2` versions of `engine_newPayload` method:
