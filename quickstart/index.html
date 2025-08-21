@@ -28,7 +28,8 @@ making changes to existing ones. Information on test generation can be found
 in <a href="docs/reference/tests.md">test-gen</a></p>
 <p>The specification itself is written in <a href="https://open-rpc.org">OpenRPC</a>. Refer to the OpenRPC
 specification and the JSON schema <a href="https://json-schema.org">specification</a> to get started.</p>
-<h3 id="building">Building</h3>
+<h3 id="updating-the-specs">Updating the specs</h3>
+<h4 id="compiling">Compiling</h4>
 <p>The specification is split into multiple files to improve readability. The
 spec can be compiled into a single document as follows:</p>
 <pre><code class="language-console">$ npm install
@@ -37,25 +38,41 @@ Build successful.
 </code></pre>
 <p>This will output the file <code>openrpc.json</code> in the root of the project. This file
 will have all schema <code>#ref</code>s resolved.</p>
-<h4 id="testing">Testing</h4>
+<h4 id="building-the-docs">Building the docs</h4>
+<p>Once you&#x27;ve updated something in the spec, you can use the docs generation tools
+to view the updated specs locally.</p>
+<pre><code class="language-console">$ npm run build:docs
+$ npm run watch
+</code></pre>
+<p>The <code>watch</code> command starts a local webserver serving the docs in-browser at
+<code>http://0.0.0.0:8000</code> and it rebuilds when you update something in the specs.<br/>
+<!-- -->Please reload the page to see your changes.</p>
+<h3 id="testing">Testing</h3>
 <p>There are several mechanisms for testing specification contributions and client
 conformance.</p>
+<h4 id="linting">Linting</h4>
 <p>First is the <a href="https://open-rpc.github.io/schema-utils-js/functions/validateOpenRPCDocument.html">OpenRPC validator</a>. It performs some basic syntactic
 checks on the generated specification.</p>
 <pre><code class="language-console">$ npm install
 $ npm run lint
 OpenRPC spec validated successfully.
 </code></pre>
+<h4 id="spec-tests">Spec tests</h4>
 <p>Next is <code>speccheck</code>. This tool validates the test cases in the <code>tests</code>
-directory against the specification.</p>
+directory against the specification.  There are two npm scripts to simplify this.</p>
+<pre><code class="language-console">$ npm run build:test
+$ npm run test 
+all passing.
+</code></pre>
+<p>or</p>
 <pre><code class="language-console">$ go install github.com/lightclient/rpctestgen/cmd/speccheck@latest
 $ speccheck -v
-all passing.
 </code></pre>
 <p>If you get an error that says: <code>speccheck: command not found</code>,
 make sure that the go binary is in your $PATH:</p>
 <pre><code class="language-console">$ export PATH=$HOME/go/bin:$PATH
 </code></pre>
+<h4 id="spelling">Spelling</h4>
 <p>The spell checker ensures the specification is free of spelling errors.</p>
 <pre><code class="language-console">$ pip install pyspelling
 $ pyspelling -c spellcheck.yaml
@@ -64,8 +81,9 @@ Spelling check passed :)
 <p>pyspelling is a wrapper around either <a href="http://aspell.net/">Aspell</a> or
 <a href="https://hunspell.github.io/">Hunspell</a>. You&#x27;ll need to install
 one of those before running <code>pyspelling</code>.</p>
+<h4 id="hive-tests">Hive tests</h4>
 <p>Finally, the test cases in the <code>tests/</code> directory may be run against individual
-execution client using the [<code>hive</code>] simulator <a href="https://github.com/ethereum/hive/tree/master/simulators/ethereum/rpc-compat"><code>rpc-compat</code></a>.
+execution client using the <a href="https://github.com/ethereum/hive"><code>hive</code></a> simulator <a href="https://github.com/ethereum/hive/tree/master/simulators/ethereum/rpc-compat"><code>rpc-compat</code></a>.
 Please see the documentation in the aforementioned repositories for more
 information.</p>
 <h2 id="graphql">GraphQL</h2>
@@ -84,6 +102,6 @@ information.</p>
           <script
             id="gatsby-chunk-mapping"
           >
-            window.___chunkMapping="{\"app\":[\"/app-546fbf62c81558032024.js\"],\"component---node-modules-gatsby-openrpc-theme-src-templates-default-tsx-content-file-path-docs-reference-contributors-guide-md\":[\"/component---node-modules-gatsby-openrpc-theme-src-templates-default-tsx-content-file-path-docs-reference-contributors-guide-md-1e861396ef15bf2d09e9.js\"],\"component---node-modules-gatsby-openrpc-theme-src-templates-default-tsx-content-file-path-docs-reference-ethsimulatev-1-notes-mdx\":[\"/component---node-modules-gatsby-openrpc-theme-src-templates-default-tsx-content-file-path-docs-reference-ethsimulatev-1-notes-mdx-569066050d1152b33f9a.js\"],\"component---node-modules-gatsby-openrpc-theme-src-templates-default-tsx-content-file-path-docs-reference-intro-md\":[\"/component---node-modules-gatsby-openrpc-theme-src-templates-default-tsx-content-file-path-docs-reference-intro-md-8fbb512f5f1cd24e11fa.js\"],\"component---node-modules-gatsby-openrpc-theme-src-templates-default-tsx-content-file-path-docs-reference-quickstart-md\":[\"/component---node-modules-gatsby-openrpc-theme-src-templates-default-tsx-content-file-path-docs-reference-quickstart-md-5a5440b84211e15a0c55.js\"],\"component---node-modules-gatsby-openrpc-theme-src-templates-default-tsx-content-file-path-docs-reference-tests-md\":[\"/component---node-modules-gatsby-openrpc-theme-src-templates-default-tsx-content-file-path-docs-reference-tests-md-257a9c3bf93d3d733542.js\"],\"component---src-pages-404-tsx\":[\"/component---src-pages-404-tsx-620718e9757be3531073.js\"],\"component---src-pages-api-documentation-tsx\":[\"/component---src-pages-api-documentation-tsx-1b91d2df626d4ed407fb.js\"],\"component---src-pages-index-tsx\":[\"/component---src-pages-index-tsx-60e8cebb970d4888fe9a.js\"]}";
+            window.___chunkMapping="{\"app\":[\"/app-546fbf62c81558032024.js\"],\"component---node-modules-gatsby-openrpc-theme-src-templates-default-tsx-content-file-path-docs-reference-contributors-guide-md\":[\"/component---node-modules-gatsby-openrpc-theme-src-templates-default-tsx-content-file-path-docs-reference-contributors-guide-md-1e861396ef15bf2d09e9.js\"],\"component---node-modules-gatsby-openrpc-theme-src-templates-default-tsx-content-file-path-docs-reference-ethsimulatev-1-notes-mdx\":[\"/component---node-modules-gatsby-openrpc-theme-src-templates-default-tsx-content-file-path-docs-reference-ethsimulatev-1-notes-mdx-569066050d1152b33f9a.js\"],\"component---node-modules-gatsby-openrpc-theme-src-templates-default-tsx-content-file-path-docs-reference-intro-md\":[\"/component---node-modules-gatsby-openrpc-theme-src-templates-default-tsx-content-file-path-docs-reference-intro-md-8fbb512f5f1cd24e11fa.js\"],\"component---node-modules-gatsby-openrpc-theme-src-templates-default-tsx-content-file-path-docs-reference-quickstart-md\":[\"/component---node-modules-gatsby-openrpc-theme-src-templates-default-tsx-content-file-path-docs-reference-quickstart-md-8b15634b00453ce86bdc.js\"],\"component---node-modules-gatsby-openrpc-theme-src-templates-default-tsx-content-file-path-docs-reference-tests-md\":[\"/component---node-modules-gatsby-openrpc-theme-src-templates-default-tsx-content-file-path-docs-reference-tests-md-11180b2e39ed8077c446.js\"],\"component---src-pages-404-tsx\":[\"/component---src-pages-404-tsx-620718e9757be3531073.js\"],\"component---src-pages-api-documentation-tsx\":[\"/component---src-pages-api-documentation-tsx-1b91d2df626d4ed407fb.js\"],\"component---src-pages-index-tsx\":[\"/component---src-pages-index-tsx-60e8cebb970d4888fe9a.js\"]}";
           </script>
-        <script>window.___webpackCompilationHash="e89d65e7e5311c721a2c";</script><script src="/execution-apis/webpack-runtime-6746ea04523e63a3b5e8.js" async></script><script src="/execution-apis/framework-e528bd2fc556d41fda47.js" async></script><script src="/execution-apis/app-546fbf62c81558032024.js" async></script><!-- slice-end id="_gatsby-scripts-1" --></body></html>
+        <script>window.___webpackCompilationHash="77f75e27c0e56fa1bea0";</script><script src="/execution-apis/webpack-runtime-089d128d85500b7182e8.js" async></script><script src="/execution-apis/framework-e528bd2fc556d41fda47.js" async></script><script src="/execution-apis/app-546fbf62c81558032024.js" async></script><!-- slice-end id="_gatsby-scripts-1" --></body></html>
